@@ -1,0 +1,43 @@
+---
+const links = [
+  { href: "/pokemons/1", text: "Kanto" },
+  { href: "/pokemons/7", text: "Jotho" },
+  { href: "/pokemons/11", text: "Hoenn" },
+  { href: "/pokemons/17", text: "Sinnoh" },
+  { href: "/pokemons/21", text: "Teselia" },
+  { href: "/pokemons/28", text: "Kalos" },
+  { href: "/pokemons/31", text: "Alola" },
+  { href: "/pokemons/34", text: "Galar" },
+  { href: "/pokemons/38", text: "Paldea" },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="shadow bg-gray-800 ">
+  <div
+    class="grid grid-cols-5 sm:grid-cols-9 text-center p-5 mx-auto text-gray-600 capitalize dark:text-gray-300"
+  >
+    {
+      links.map(({ href, text }) => (
+        <div class="mb-3 sm:mb-0">
+          <a
+            href={href}
+            class=" text-gray-800 dark:text-gray-200 mx-1.5 sm:mx-4 md:mx-6 my "
+          >
+            {text}
+          </a>
+
+          {currentPath === href ? (
+            <div
+              transition:persist
+              class="border-b-2 border-blue-500 mx-4"
+            />
+          ) : (
+            <div class="border-b-2 border-transparent" />
+          )}
+        </div>
+      ))
+    }
+  </div>
+</nav>

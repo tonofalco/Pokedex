@@ -1,0 +1,76 @@
+---
+import type { GetStaticPaths } from 'astro';
+
+import PokemonCard from '@components/pokemons/PokemonCard.astro';
+import type { PokemonListResponse } from '@interfaces/pokemon-list.response';
+
+import MainLayout from '@layouts/MainLayout.astro';
+import Title from '@components/shared/Title.astro';
+import Regions from '@components/shared/Regions.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const resp = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
+  const { results } = (await resp.json()) as PokemonListResponse;
+
+  return paginate(results, { pageSize: 24 });
+}) satisfies GetStaticPaths;
+
+const title = 'Pokémon Static | Home';
+const { page } = Astro.props;
+// console.log('🚀 ~ page:', page);
+---
+
+<MainLayout title={title}>
+  <Title>Pokémon</Title>
+
+  <Regions />
+
+  <section class="flex mt-5 gap-2 items-center">
+    <a
+      class:list={[
+        'font-bold py-2 px-4  rounded ',
+        {
+          'bg-blue-500 hover:bg-blue-400 text-white border-b-4 border-blue-700 hover:border-blue-500': page.url.prev,
+          disabled: !page.url.prev,
+        },
+      ]}
+      href={page.url.prev}
+    >
+      Anterior
+    </a>
+
+    <a
+      class:list={[
+          'font-bold py-2 px-4  rounded ',
+        {
+          'bg-blue-500 hover:bg-blue-400 text-white border-b-4 border-blue-700 hover:border-blue-500': page.url.next,
+          disabled: !page.url.next,
+        },
+      ]}
+      href={page.url.next}>Siguiente</a
+    >
+
+    <div class="flex flex-1"></div>
+
+    <span class="text-xl font-bold">Página {page.currentPage}</span>
+  </section>
+
+  <section
+    aria-label="Listado de Pokémons"
+    class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4 mt-5"
+  >
+    {page.data.map(({ name, url }) => <PokemonCard name={name} url={url} />)}
+  </section>
+
+  
+</MainLayout>
+
+<style>
+  .btn {
+    @apply bg-blue-500 p-2 text-white rounded-md;
+  }
+
+  .disabled {
+    @apply bg-gray-600 text-gray-400;
+  }
+</style>
